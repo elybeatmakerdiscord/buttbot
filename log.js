@@ -10,7 +10,7 @@ function log(str, type) {
     case 2: // WARN
         console.warn(str);
         break;
-    default:
+    default: // DEBUG
         console.debug(str);
         break;
     }

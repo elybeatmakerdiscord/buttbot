@@ -4,6 +4,8 @@
  */
 
 const Eris = require('eris');
+const Sequelize = require('sequelize');
+const reload = require('require-reload')(require);
 const log = require('./log.js');
 const config = require('./config.js');
 
@@ -13,16 +15,11 @@ const client = new Eris(config.token, {
     defaultImageSize: 1024,
 });
 
-const ctx = {};
-ctx.client = client;
-ctx.bot = client;
-const libs = {
-    Eris,
-    Reload: require('require-reload')(require),
-    Sequelize: require('sequelize'),
+const ctx = {
+    client,
 };
 
-ctx.db = new libs.Sequelize('database', 'username', 'password', {
+ctx.db = new Sequelize('database', 'username', 'password', {
     host: 'localhost',
     dialect: 'mysql',
     logging: false,
