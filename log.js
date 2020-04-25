@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-function log(str, type) {
+function log(type, str) {
     switch (type) {
     case 0: // INFO
         console.log(str);

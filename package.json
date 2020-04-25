@@ -27,7 +27,8 @@
     "rules": {
       "global-require": "off",
       "indent": ["error", 4],
-      "prefer-default-export": "off"
+      "prefer-default-export": "off",
+      "import/no-dynamic-require": "warn"
     }
   }
 }
