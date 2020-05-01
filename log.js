@@ -11,7 +11,7 @@ function log(type, str) {
         console.warn(str);
         break;
     default: // DEBUG
-        console.debug(str);
+        console.debug(type);
         break;
     }
 }
