@@ -17,7 +17,6 @@ function sillies(args, ctx) {
             msg.channel.createMessage(silly.response);
         }
     });
-    return;
 }
 module.exports = [{
     name: 'sillies',

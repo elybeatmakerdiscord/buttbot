@@ -31,6 +31,17 @@ client.on('ready', () => {
     });
 });
 
+client.on('guildCreate', (guild) => {
+    if (!config.guilds[guild.id]) {
+        guild.leave();
+        Object.entries(config.guilds).forEach((configuredGuild) => {
+            if (configuredGuild[1].logStatus === true) {
+                client.getChannel(configuredGuild[1].logChannel).createMessage(`:door: [Useless Guild]: Left useless guild \`${guild.id}\``);
+            }
+        });
+    }
+});
+
 client.on('error', (err) => {
     if (err.message.length > 1900) {
         Object.entries(config.guilds).forEach((configuredGuild) => {
@@ -64,15 +75,15 @@ const ctx = {
 function loadEvent(module, file) {
     const eventName = `${file} | ${module.event} | ${module.name}`;
     switch (module.event) {
-    case 'timer':
-        break;
-    case 'command':
-        ctx.cmds.set(module.name, module);
-        break;
-    default:
-        client.on(module.event, (...args) => { module.func(args, ctx); });
-        ctx.events.set(eventName, module);
-        break;
+        case 'timer':
+            break;
+        case 'command':
+            ctx.cmds.set(module.name, module);
+            break;
+        default:
+            client.on(module.event, (...args) => { module.func(args, ctx); });
+            ctx.events.set(eventName, module);
+            break;
     }
 }
 

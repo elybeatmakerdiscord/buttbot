@@ -18,8 +18,9 @@ async function timedDelete(msg, ctx) {
 
 function failedMessage(reason, msg, ctx) {
     msg.delete(`buttbot/remixSuggestions: Failed ${reason} check`);
-    ctx.client.createMessage(ctx.config.guilds[msg.channel.guild.id].logChannel, `:speech_balloon: [Failed ${reason}] <@${msg.member.id}> tried to say \`${msg.cleanContent}\` in <#${msg.channel.id}>`);
-
+    if (ctx.config.guilds[msg.channel.guild.id].logChannel) {
+        ctx.client.createMessage(ctx.config.guilds[msg.channel.guild.id].logChannel, `:speech_balloon: [remixSuggestions] Failed: ${reason}; <@${msg.member.id}> tried to say \`${msg.cleanContent}\` in <#${msg.channel.id}>`);
+    }
     let reasonString = '';
     switch (reason) {
     case 'link':
