@@ -24,11 +24,6 @@ const client = new Eris(config.token, {
 client.on('ready', () => {
     log(0, 'ButtBot Instance Loaded.');
     log(0, `Logged in as: ${client.user.username}`);
-    Object.entries(config.guilds).forEach((configuredGuild) => {
-        if (configuredGuild[1].logStatus === true) {
-            client.getChannel(configuredGuild[1].logChannel).createMessage('🔌 [Ready]: Ready!');
-        }
-    });
 });
 
 client.on('guildCreate', (guild) => {
@@ -36,31 +31,32 @@ client.on('guildCreate', (guild) => {
         guild.leave();
         Object.entries(config.guilds).forEach((configuredGuild) => {
             if (configuredGuild[1].logStatus === true) {
-                client.getChannel(configuredGuild[1].logChannel).createMessage(`:door: [Useless Guild]: Left useless guild \`${guild.id}\``);
+                client.getChannel(configuredGuild[1].logChannel).createMessage(`:door: [Useless Guild]: Left unconfigured guild \`${guild.id}\``);
             }
         });
     }
 });
 
-client.on('error', (err) => {
-    if (err.message.length > 1900) {
-        Object.entries(config.guilds).forEach((configuredGuild) => {
-            if (configuredGuild[1].logStatus === true) {
-                client.getChannel(configuredGuild[1].logChannel).createMessage('⛔ [Error]: Error too long to send.');
-            }
-        });
-    } else {
-        Object.entries(config.guilds).forEach((configuredGuild) => {
-            if (configuredGuild[1].logStatus === true) {
-                client.getChannel(configuredGuild[1].logChannel).createMessage(`⛔ [Error]: \`${err.message}\``);
-            }
-        });
-    }
-});
+// client.on('error', (err) => {
+//     if (err.message.length > 1900) {
+//         Object.entries(config.guilds).forEach((configuredGuild) => {
+//             if (configuredGuild[1].logStatus === true) {
+//                 client.getChannel(configuredGuild[1].logChannel).createMessage('⛔ [Error]: Error too long to send.');
+//             }
+//         });
+//     } else {
+//         Object.entries(config.guilds).forEach((configuredGuild) => {
+//             if (configuredGuild[1].logStatus === true) {
+//                 client.getChannel(configuredGuild[1].logChannel).createMessage(`⛔ [Error]: \`${err.message}\``);
+//             }
+//         });
+//     }
+// });
 
 const ctx = {
     client,
     config,
+    util: require('./util.js'),
     cmds: new Eris.Collection(),
     events: new Eris.Collection(),
     ratelimits: new Eris.Collection(),
@@ -74,16 +70,17 @@ const ctx = {
 
 function loadEvent(module, file) {
     const eventName = `${file} | ${module.event} | ${module.name}`;
+    const eventStr = `${module.event}`; // we pass this on to the event so we know which event was triggered
     switch (module.event) {
-        case 'timer':
-            break;
-        case 'command':
-            ctx.cmds.set(module.name, module);
-            break;
-        default:
-            client.on(module.event, (...args) => { module.func(args, ctx); });
-            ctx.events.set(eventName, module);
-            break;
+    case 'timer':
+        break;
+    case 'command':
+        ctx.cmds.set(module.name, module);
+        break;
+    default:
+        client.on(module.event, (...args) => { module.func(args, ctx, eventStr); });
+        ctx.events.set(eventName, module);
+        break;
     }
 }
 
@@ -96,7 +93,17 @@ moduleDir.forEach((file) => {
 
     if (newModule.length > 0) {
         newModule.forEach((subModule) => {
-            loadEvent(subModule, file);
+            // if we have multiple events for a single module
+            if (typeof subModule.event === 'object') {
+                subModule.event.forEach((eventType) => {
+                    // Not very elegant, dunno what to do here
+                    const moduleToPassOn = subModule;
+                    moduleToPassOn.event = eventType;
+                    loadEvent(moduleToPassOn, file);
+                });
+            } else {
+                loadEvent(subModule, file);
+            }
         });
     }
 });
@@ -119,14 +126,5 @@ function commandHandler(msg) {
 }
 
 client.on('messageCreate', commandHandler);
-/*
- * TASK SCHEDULING
- */
-
-/*
- * Logging
- */
-
-
 
 client.connect();

@@ -52,23 +52,7 @@ function failedMessage(reason, msg, ctx) {
 function remixSuggestions(args, ctx) {
     const msg = args[0];
 
-    // Check to make sure not a system/webhook message
-    if (!msg.author) return;
-
-    // Check to make sure we don't respond to ourselves
-    if (msg.author.id === ctx.client.user.id) return;
-
-    // Check to make sure the author of the message is not a bot
-    if (msg.author.bot) return;
-
-    // Check if we're in a guild
-    if (!msg.channel.guild) return;
-
-    // Check if guild has a config
-    if (!ctx.config.guilds[msg.channel.guild.id]) return;
-
-    // Check if message occurs in enabled guild
-    if (!ctx.config.guilds[msg.channel.guild.id].remixSuggestions) return;
+    if (!ctx.util.shouldHandleMessage(msg, ctx, { configEntry: 'remixSuggestions' })) return;
 
     // Check if message occurs in affected channels
     if (!ctx.config.guilds[msg.channel.guild.id].remixSuggestions.affectedChannels.includes(msg.channel.id)) return;
