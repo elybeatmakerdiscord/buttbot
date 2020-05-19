@@ -18,8 +18,8 @@ function logAdminEvents(args, ctx, eventName) {
         sendMessage(adminLogChannels, ':electric_plug: [Ready]: Ready!', ctx);
         break;
     case 'warn':
-        console.log('WARN');
-        console.log(args);
+        sendMessage(adminLogChannels, `:warning: [Warn]: ${args[0].message}`, ctx);
+        console.warn(args);
         break;
     case 'error':
         sendMessage(adminLogChannels, `:no_entry: [Error]: ${args[0].message}`, ctx);
