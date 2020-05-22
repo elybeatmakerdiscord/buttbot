@@ -1,25 +1,24 @@
 const moderativeEvents = ['messageDelete', 'messageUpdate', 'guildBanAdd', 'guildBanRemove'];
-function logDelete(args, ctx) {
+function logEditsDeletes(args, ctx) {
     const msg = args[0];
 
     // Check if message occurs in enabled guild
     if (!ctx.config.guilds[msg.channel.guild.id].logEvents) return;
-
-    // Check if message author is immune
-    // if (msg.member.roles.includes(ctx.config.guilds[msg.channel.guild.id].immuneRoleId)) return;
+    if (!ctx.config.guilds[msg.channel.guild.id].logChannels) return;
+    if (!ctx.config.guilds[msg.channel.guild.id].logChannels.editsDeletes) return;
 
     // Allow mods to delete messages from log channel
-    if (msg.channel.id === ctx.config.guilds[msg.channel.guild.id].msgLogChannel) return;
+    if (msg.channel.id === ctx.config.guilds[msg.channel.guild.id].logChannels.editsDeletes) return;
 
-    if (ctx.config.guilds[msg.channel.guild.id].msgLogChannel) {
-        ctx.client.createMessage(ctx.config.guilds[msg.channel.guild.id].msgLogChannel, `:wastebasket: [logEvents] messageDelete; by ${msg.member.username}#${msg.member.discriminator} in <#${msg.channel.id}>\n**Content:**\n${msg.cleanContent}`);
-    }
+    ctx.client.createMessage(
+        ctx.config.guilds[msg.channel.guild.id].logChannels.editsDeletes,
+        `:wastebasket: [logEvents] messageDelete; by ${msg.member.username}#${msg.member.discriminator} in <#${msg.channel.id}>\n**Content:**\n${msg.cleanContent}`,
+    );
 }
 
 function logJoinsLeaves(args, ctx, eventName) {
     const guild = args[0];
     const member = args[1];
-    console.log('heck');
     if (!ctx.config.guilds[guild.id].logChannels
         && !ctx.config.guilds[guild.id].logChannels.joinsLeaves) return;
 
@@ -31,11 +30,10 @@ function logJoinsLeaves(args, ctx, eventName) {
     }
 }
 module.exports = [{
-    name: 'logDelete',
+    name: 'logEditsDeletes',
     event: 'messageDelete',
-    func: logDelete,
-}];
-module.exports = [{
+    func: logEditsDeletes,
+}, {
     name: 'logJoinsLeaves',
     event: ['guildMemberAdd', 'guildMemberRemove'],
     func: logJoinsLeaves,
