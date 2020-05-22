@@ -8,7 +8,7 @@ function badWords(args, ctx) {
 
     // Check if message contains badword
     ctx.config.badWords.forEach((i) => {
-        if (msg.content.toLowerCase().includes(i)) {
+        if (msg.content.toLowerCase().split(' ').includes(i)) {
             msg.delete('buttbot/badWords: Said blacklisted word');
             if (ctx.config.guilds[msg.channel.guild.id].logChannel) {
                 ctx.client.createMessage(ctx.config.guilds[msg.channel.guild.id].logChannel, `:eye_in_speech_bubble: [badWords] <@${msg.member.id}> tried to say \`${msg.cleanContent}\` in <#${msg.channel.id}>`);
