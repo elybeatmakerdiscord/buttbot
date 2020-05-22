@@ -3,16 +3,17 @@ const timestampRegex = /((&|\?)(t=)\d+)|((\d\d?:)?\d\d?:\d\d)|(clips\.twitch\.tv
 const tips = [
     'TIP: If you already submitted a suggestion, and want to add a comment, edit your previous message.',
     'TIP: You can copy a link and timestamp from a youtube video by right clicking, and clicking "Copy video URL at current time"',
+    'TIP: Don\'t respond to other people\'s messages. Your message will be deleted. Use a reaction instead',
 ];
 const title = 'remixSuggestions';
-const failedLink = 'Please include a link to the video you want remixed, and a timestamp';
+const failedLink = 'Please include a link to the video you want remixed, and a timestamp.\nOtherwise, you cannot chat in this channel.';
 const failedTimestamp = 'Please include the time of the video you want remixed';
 
-async function timedDelete(msg, ctx) {
+async function timedDelete(msg, guildId, ctx) {
     const awaitedMsg = await msg;
     setTimeout(() => {
         awaitedMsg.delete();
-    }, ctx.config.remixSuggestions.deleteTimer);
+    }, ctx.config.guilds[guildId].remixSuggestions.deleteTimer);
 }
 
 
@@ -46,7 +47,7 @@ function failedMessage(reason, msg, ctx) {
             description: reasonString,
             footer: { text: tipString },
         },
-    }), ctx);
+    }), msg.channel.guild.id, ctx);
 }
 
 function remixSuggestions(args, ctx) {
