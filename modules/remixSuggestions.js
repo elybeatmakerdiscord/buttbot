@@ -1,4 +1,4 @@
-const urlRegex = /((http(s)?:\/\/)(www.)?((((youtu\.be\/|youtube.com\/watch\?v=))(.{11}))|clips\.twitch\.tv\/\w+))/gi;
+const urlRegex = /((http(s)?:\/\/)((www\.)?|(m\.)?)((((youtu\.be\/|youtube.com\/watch))(((\?|&)v=)?.{11}))|(www\.)?twitch.tv\/\w+\/v\/\d+|clips\.twitch\.tv\/\w+))/gi;
 const timestampRegex = /((&|\?)(t=)\d+)|((\d\d?:)?\d\d?:\d\d)|(clips\.twitch\.tv)/g;
 const tips = [
     'TIP: If you already submitted a suggestion, and want to add a comment, edit your previous message.',
