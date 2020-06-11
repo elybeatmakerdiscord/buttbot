@@ -5,12 +5,14 @@ function noDeadChat(args, ctx) {
     if (msg.member.roles.includes(ctx.config.guilds[msg.channel.guild.id].immuneRoleId)) return;
 
     // Check if message contains dead chat
-    if (ctx.config.deadChatStrings.includes(msg.content.toLowerCase())) {
-        msg.delete('buttbot/badWords: Said dead chat');
-        if (ctx.config.guilds[msg.channel.guild.id].logChannel) {
-            ctx.client.createMessage(ctx.config.guilds[msg.channel.guild.id].logChannel, `:skull_crossbones: [deadChat] <@${msg.member.id}> tried to say \`${msg.cleanContent}\` in <#${msg.channel.id}>`);
+    ctx.config.deadChatStrings.forEach((deadChatString) => {
+        if (msg.content.toLowerCase().includes(deadChatString)) {
+            msg.delete('buttbot/badWords: Said dead chat');
+            if (ctx.config.guilds[msg.channel.guild.id].logChannel) {
+                ctx.client.createMessage(ctx.config.guilds[msg.channel.guild.id].logChannel, `:skull_crossbones: [deadChat] <@${msg.member.id}> tried to say \`${msg.cleanContent}\` in <#${msg.channel.id}>`);
+            }
         }
-    }
+    });
 }
 
 module.exports = [{
